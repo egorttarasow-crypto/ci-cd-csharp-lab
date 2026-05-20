@@ -2,7 +2,7 @@ name: CI/CD for CalculatorApp
 
 on:
   push:
-    branches: [ main, feature/* ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -18,11 +18,17 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Restore and build main project
+      run: |
+        cd CalculatorApp
+        dotnet restore
+        dotnet build --no-restore
 
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Restore and build tests
+      run: |
+        cd CalculatorApp.Tests
+        dotnet restore
+        dotnet build --no-restore
 
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal
+      run: cd CalculatorApp.Tests && dotnet test --no-build --verbosity normal
